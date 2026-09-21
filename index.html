@@ -223,12 +223,27 @@
     QUESTIONS.forEach(function (q) { if (q.subject) seen[q.subject] = 1; });
     return Object.keys(seen).sort();
   }
-  function inFilter(q) {
-    if (state.subject !== "all" && q.subject !== state.subject) return false;
-    if (state.filter === "all") return true;
-    if (state.filter === "wrong2") return wrongCount(q) >= 2;
-    if (state.filter === "unmastered") return !p(q.id).mastered;
+  function qDates(q) {
+    return q.dates && q.dates.length ? q.dates : (q.date ? [q.date] : []);
+  }
+  function match(q, filter, subject) {
+    if (subject !== "all" && q.subject !== subject) return false;
+    if (filter === "all") return true;
+    if (filter === "wrong2") return wrongCount(q) >= 2;
+    if (filter === "unmastered") return !p(q.id).mastered;
+    if (filter.indexOf("day:") === 0) return qDates(q).indexOf(filter.slice(4)) !== -1;
     return true;
+  }
+  function inFilter(q) { return match(q, state.filter, state.subject); }
+  function countFor(filter) {
+    var n = 0;
+    for (var i = 0; i < QUESTIONS.length; i++) if (match(QUESTIONS[i], filter, state.subject)) n++;
+    return n;
+  }
+  function allDates() {
+    var seen = {};
+    QUESTIONS.forEach(function (q) { qDates(q).forEach(function (d) { if (d) seen[d] = 1; }); });
+    return Object.keys(seen).sort().reverse();
   }
   function pool() { return QUESTIONS.filter(inFilter); }
   function masteredCount() {
@@ -350,15 +365,19 @@
     h += '  <div class="stat"><div class="n">' + list.length + '</div><div class="l">当前范围题数</div></div>';
     h += '</div>';
 
+    var scopes = [["wrong2", "只练错2次以上"]];
+    allDates().forEach(function (d) { scopes.push(["day:" + d, d.slice(5).replace("-", ".") + " 全部"]); });
+    scopes.push(["unmastered", "未掌握"], ["all", "全部错题"]);
+
     h += '<div class="card" style="margin-top:12px">';
     h += '  <div class="label">范围</div><div class="chips">';
-    [["wrong2", "只练错2次以上"], ["unmastered", "未掌握"], ["all", "全部错题"]].forEach(function (o) {
-      h += '<button class="chip" data-act="filter" data-v="' + o[0] + '" aria-pressed="' + (state.filter === o[0]) + '">' + o[1] + '</button>';
+    scopes.forEach(function (o) {
+      h += '<button class="chip" data-act="filter" data-v="' + o[0] + '" aria-pressed="' + (state.filter === o[0]) + '">' + o[1] + " " + countFor(o[0]) + '</button>';
     });
     h += '  </div>';
 
     if (subj.length > 1) {
-      h += '  <div class="label" style="margin-top:14px">科目</div><div class="chips">';
+      h += '  <div class="label" style="margin-top:14px">题型</div><div class="chips">';
       h += '<button class="chip" data-act="subject" data-v="all" aria-pressed="' + (state.subject === "all") + '">全部</button>';
       subj.forEach(function (s) {
         h += '<button class="chip" data-act="subject" data-v="' + esc(s) + '" aria-pressed="' + (state.subject === s) + '">' + esc(s) + '</button>';
