@@ -1,0 +1,16 @@
+{
+  "name": "错题重练 — 危化品安全管理",
+  "short_name": "错题重练",
+  "description": "在线壹佰分 9.19–9.21 错 2 次以上错题，手机刷题用",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f6f8",
+  "theme_color": "#2563eb",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
