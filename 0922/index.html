@@ -368,7 +368,9 @@
 
     var dates = allDates();
     var scopes = [["wrong2", "只练错2次以上"]];
-    if (dates.length > 1) dates.forEach(function (d) { scopes.push(["day:" + d, d.slice(5).replace("-", ".") + " 全部"]); });
+    // 只有跨多天的累计版才显示按天筛选；单日专场不显示
+    var isMultiDay = String(META.range || "").indexOf("~") !== -1;
+    if (isMultiDay && dates.length > 1) dates.forEach(function (d) { scopes.push(["day:" + d, d.slice(5).replace("-", ".") + " 全部"]); });
     scopes.push(["unmastered", "未掌握"], ["all", "全部错题"]);
 
     h += '<div class="card" style="margin-top:12px">';
