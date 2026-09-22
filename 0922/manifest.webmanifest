@@ -1,7 +1,7 @@
 {
-  "name": "错题重练 — 危化品安全管理",
-  "short_name": "错题重练",
-  "description": "9.19–9.22 错题，手机刷题用",
+  "name": "9.22 错题专场 — 危化品安全管理",
+  "short_name": "9.22 错题",
+  "description": "2026-09-22 当天做的错题，手机刷题用",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
